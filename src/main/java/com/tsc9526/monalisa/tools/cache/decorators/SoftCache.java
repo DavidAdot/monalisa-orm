@@ -14,7 +14,7 @@ import com.tsc9526.monalisa.tools.cache.Cache;
 @SuppressWarnings({"rawtypes","unchecked"})
 public class SoftCache implements Cache {
 	
-	private final LinkedList hardLinksToAvoidGarbageCollection;
+	private final LinkedList Avoidgarbagelist;
 	private final ReferenceQueue queueOfGarbageCollectedEntries;
 	private final Cache delegate;
 	private int numberOfHardLinks;
@@ -22,7 +22,7 @@ public class SoftCache implements Cache {
 	public SoftCache(Cache delegate) {
 		this.delegate = delegate;
 		this.numberOfHardLinks = 256;
-		this.hardLinksToAvoidGarbageCollection = new LinkedList();
+		this.Avoidgarbagelist = new LinkedList();
 		this.queueOfGarbageCollectedEntries = new ReferenceQueue();
 	}
 
@@ -57,9 +57,9 @@ public class SoftCache implements Cache {
 			if (result == null) {
 				delegate.removeObject(key);
 			} else {
-				hardLinksToAvoidGarbageCollection.addFirst(result);
-				if (hardLinksToAvoidGarbageCollection.size() > numberOfHardLinks) {
-					hardLinksToAvoidGarbageCollection.removeLast();
+				Avoidgarbagelist.addFirst(result);
+				if (Avoidgarbagelist.size() > numberOfHardLinks) {
+					Avoidgarbagelist.removeLast();
 				}
 			}
 		}
@@ -72,7 +72,7 @@ public class SoftCache implements Cache {
 	}
 
 	public void clear() {
-		hardLinksToAvoidGarbageCollection.clear();
+		Avoidgarbagelist.clear();
 		removeGarbageCollectedItems();
 		delegate.clear();
 	}

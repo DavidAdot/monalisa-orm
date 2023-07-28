@@ -612,74 +612,83 @@ public class ModelMeta{
 	boolean isChanged(){
 		return changed;
 	}
-	 
 
-	protected static FGS createFGS(final MetaColumn c,final FGS mfd){	
-		return new FGS(mfd==null?null:mfd.getType(),c.getJavaName(),c.getName()){
+
+	protected static FGS createFGS(final MetaColumn c, final FGS mfd) {
+		return new FGS(mfd == null ? null : mfd.getType(), c.getJavaName(), c.getName()) {
 			private Column columnAnnotation;
-			
+
 			@Override
-			public void setObject(Object bean,Object v){
-				if(mfd!=null){
+			public void setObject(Object bean, Object v) {
+				if (mfd != null) {
 					mfd.setObject(bean, v);
-				}else{
-					if(bean instanceof Model<?>){
-						Model<?> m=(Model<?>)bean;
-						
-						if(Date.class.getName().equals(c.getJavaType())){
-							v=MelpClass.converter.convert(v, Date.class);
-						}else{
-							try{
-								String jtype=c.getJavaType();
-								if(jtype.indexOf(".")<0){
-									jtype="java.lang."+jtype;
-								}
-								
-								v=MelpClass.converter.convert(v, Class.forName(jtype));
-							}catch(ClassNotFoundException e){
-								throw new RuntimeException("Convert: "+v+" to class exception: "+c.getJavaType(),e);
-							}
-						}
-						
-						m.holder().set(c.getName(), v);							
-					} 					
-				}				
-			}
-			
-			@Override
-			public Object getObject(Object bean){
-				if(mfd!=null){
-					return mfd.getObject(bean);
-				}else{
-					if(bean instanceof Model<?>){
-						Model<?> m=(Model<?>)bean;
-						return m.holder().get(c.getName());
-					}else{
-						return null;
-					}
+				} else {
+					setObjectForModel(bean, v);
 				}
 			}
-			
-			@Override
-			public Field getField(){
-				return mfd==null?null:mfd.getField();
+
+			private void setObjectForModel(Object bean, Object v) {
+				if (bean instanceof Model<?>) {
+					Model<?> m = (Model<?>) bean;
+
+					if (Date.class.getName().equals(c.getJavaType())) {
+						v = MelpClass.converter.convert(v, Date.class);
+					} else {
+						try {
+							String jtype = c.getJavaType();
+							if (jtype.indexOf(".") < 0) {
+								jtype = "java.lang." + jtype;
+							}
+
+							v = MelpClass.converter.convert(v, Class.forName(jtype));
+						} catch (ClassNotFoundException e) {
+							throw new RuntimeException("Convert: " + v + " to class exception: " + c.getJavaType(), e);
+						}
+					}
+
+					m.holder().set(c.getName(), v);
+				}
 			}
-			
+
+			@Override
+			public Object getObject(Object bean) {
+				if (mfd != null) {
+					return mfd.getObject(bean);
+				} else {
+					return getObjectForModel(bean);
+				}
+			}
+
+			private Object getObjectForModel(Object bean) {
+				if (bean instanceof Model<?>) {
+					Model<?> m = (Model<?>) bean;
+					return m.holder().get(c.getName());
+				} else {
+					return null;
+				}
+			}
+
+			@Override
+			public Field getField() {
+				return mfd == null ? null : mfd.getField();
+			}
+
 			@Override
 			@SuppressWarnings("unchecked")
-			public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {				
-				if(annotationClass==Column.class){
-					if(columnAnnotation==null){
-						columnAnnotation=createColumn(c);
+			public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+				if (annotationClass == Column.class) {
+					if (columnAnnotation == null) {
+						columnAnnotation = createColumn(c);
 					}
-					return (T)columnAnnotation;
-				}else{
+					return (T) columnAnnotation;
+				} else {
 					return null;
 				}
 			}
 		};
 	}
-	
+
+
 	protected static Column createColumn(final MetaColumn c){
 		return new Column(){								 
 			public Class<? extends Annotation> annotationType() {

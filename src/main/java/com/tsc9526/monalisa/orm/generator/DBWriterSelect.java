@@ -135,227 +135,114 @@ public class DBWriterSelect{
 			return v.toString().trim();
 		}
 	}
-	public void service(JspContext request,PrintWriter out){
-		
-MetaTable    table  =(MetaTable)request.getAttribute("table");
-@SuppressWarnings("unchecked")
-Set<String> imports =(Set<String>)request.getAttribute("imports");
-String   fingerprint=(String)request.getAttribute("fingerprint");
-String   see        =(String)request.getAttribute("see");
-		out.print("package ");
-			out.print(table.getJavaPackage());
-			out.println(";");
-			
-	for(MetaColumn c:table.getColumns()){
-		if(c.getTable()!=null && c.getCode("file")!=null){
-			imports.add("java.io.File");
-			imports.add("com.tsc9526.monalisa.tools.io.MelpFile");
-			imports.add("com.tsc9526.monalisa.orm.datasource.DBConfig");
-			
-			break;
-		}
-	}
-		
-		out.println(" ");
-			for(String i:imports){ 		out.println("");
-			out.print("import ");
-			out.print(i);
-			out.print(";");
-			} 		out.println("");
-			out.println("  ");
-			out.println("/**");
-			out.print(" * Auto generated code by monalisa ");
-			out.print(Version.getVersion());
-			out.println("");
-			out.println(" *");
-			out.print(" * @see ");
-			out.print(see);
-			out.println("");
-			out.println(" */");
-			out.print("public class ");
-			out.print(table.getJavaName());
-			out.println(" implements java.io.Serializable{");
-			out.print("	private static final long serialVersionUID = ");
-			out.print(table.getSerialID());
-			out.println("L;	");
-			out.print("	final static String  FINGERPRINT = \"");
-			out.print(fingerprint );
-			out.println("\";");
-			out.println("	  ");
-			out.println("	 ");
-			out.print("	");
-			for(MetaColumn f:table.getColumns()){ 		out.println("");
-			out.print("	");
-			out.print(getComments(table, f, "	","\t") );
-			out.println("");
-			out.print("	private ");
-			out.print(f.getJavaType());
-			out.print(" ");
-			out.print(f.getJavaName());
-			out.println(";	");
-			out.println("	");
-			out.print("	");
-			}		out.println("");
-			out.println("	");
-			out.println("	");
-			out.print("	");
-			for(MetaColumn f:table.getColumns()){ 		out.println("");
-			out.print("	");
-			out.print(getComments(table, f, "	","\t") );
-			out.println("");
-			out.print("	public ");
-			out.print(table.getJavaName());
-			out.print(" ");
-			out.print(f.getJavaNameSet());
-			out.print("(");
-			out.print(f.getJavaType());
-			out.print(" ");
-			out.print(f.getJavaName());
-			out.println("){");
-			out.print("		this.");
-			out.print(f.getJavaName());
-			out.print(" = ");
-			out.print(f.getJavaName());
-			out.println(";");
-			out.println("		return this;");
-			out.println("	}");
-			out.println("	");
-			out.print("	");
-			}		out.println("");
-			out.println("	");
-			out.println("	 ");
-			out.print("	");
-			for(MetaColumn f:table.getColumns()){ 		out.println("");
-			out.print("	");
-			out.print(getComments(table, f, "	","\t") );
-			out.println("");
-			out.print("	public ");
-			out.print(f.getJavaType());
-			out.print(" ");
-			out.print(f.getJavaNameGet());
-			out.println("(){");
-			out.print("		return this.");
-			out.print(f.getJavaName());
-			out.println(";		");
-			out.println("	}");
-			out.println("	");
-			out.print("	");
-			out.print(getComments(table, f, "@param defaultValue  Return the default value if "+f.getJavaName()+" is null.","\t") );
-			out.println("");
-			out.print("	public ");
-			out.print(f.getJavaType());
-			out.print(" ");
-			out.print(f.getJavaNameGet());
-			out.print("(");
-			out.print(f.getJavaType());
-			out.println(" defaultValue){");
-			out.print("		");
-			out.print(f.getJavaType());
-			out.print(" r=this.");
-			out.print(f.getJavaNameGet());
-			out.println("();");
-			out.println("		if(r==null){");
-			out.println("			r=defaultValue;");
-			out.println("		}		");
-			out.println("		");
-			out.println("		return r;");
-			out.println("	}");
-			out.println("	");
-			out.print("	");
-			String file=f.getCode("file"); if(f.getTable()!=null && file!=null){		out.println("");
-			out.print("	");
-			out.print(getComments(table,f,"@param charset  read file content using this charset.","\t"));
-			out.println(" ");
-			out.print("	public String ");
-			out.print(f.getJavaNameGet());
-			out.println("AsString(String charset){");
-			out.print("		");
-			out.print(f.getJavaType());
-			out.print(" r=this.");
-			out.print(f.getJavaNameGet());
-			out.println("();");
-			out.println("		");
-			out.println("		if(r==null){");
-			out.println("			return null;");
-			out.println("		}");
-			out.println("		");
-			out.print("		DBConfig db=DBConfig.fromClass(");
-			out.print(f.getTable().getJavaName());
-			out.println(".class);");
-			out.print("		String filepath=MelpFile.combinePath(\"");
-			out.print(file);
-			out.println("\",r);");
-			out.println("		filepath=db.getCfg().parseFilePath(filepath);");
-			out.println("		return MelpFile.readToString(new File(filepath),charset);");
-			out.println("	}");
-			out.println("	");
-			out.print("	");
-			out.print(getComments(table,f,"	","\t"));
-			out.println(" ");
-			out.print("	public String ");
-			out.print(f.getJavaNameGet());
-			out.println("AsStringUTF8(){");
-			out.print("		return ");
-			out.print(f.getJavaNameGet());
-			out.println("AsString(\"utf-8\");");
-			out.println("	}");
-			out.println("	");
-			out.print("	");
-			out.print(getComments(table,f,"	","\t"));
-			out.println(" ");
-			out.print("	public byte[] ");
-			out.print(f.getJavaNameGet());
-			out.println("AsBytes(){");
-			out.print("		");
-			out.print(f.getJavaType());
-			out.print(" r=this.");
-			out.print(f.getJavaNameGet());
-			out.println("();");
-			out.println("		");
-			out.println("		if(r==null){");
-			out.println("			return null;");
-			out.println("		}");
-			out.println("		");
-			out.print("		DBConfig db=DBConfig.fromClass(");
-			out.print(f.getTable().getJavaName());
-			out.println(".class);");
-			out.print("		String filepath=MelpFile.combinePath(\"");
-			out.print(file);
-			out.println("\",r);");
-			out.println("		filepath=db.getCfg().parseFilePath(filepath);");
-			out.println("		return MelpFile.readFile(new File(filepath));");
-			out.println("	}");
-			out.println("	");
-			out.print("	public File ");
-			out.print(f.getJavaNameGet());
-			out.println("AsFile(){");
-			out.print("		");
-			out.print(f.getJavaType());
-			out.print(" r=this.");
-			out.print(f.getJavaNameGet());
-			out.println("();");
-			out.println("		");
-			out.println("		if(r==null){");
-			out.println("			return null;");
-			out.println("		}");
-			out.println("		");
-			out.print("		DBConfig db=DBConfig.fromClass(");
-			out.print(f.getTable().getJavaName());
-			out.println(".class);");
-			out.print("		String filepath=MelpFile.combinePath(\"");
-			out.print(file);
-			out.println("\",r);");
-			out.println("		filepath=db.getCfg().parseFilePath(filepath);");
-			out.println("		return new File(filepath);");
-			out.println("	}");
-			out.print("	");
-			}		out.println("");
-			out.print("	");
-			}		out.println("");
-			out.println("		 ");
-			out.println("}");
-			out.println(" ");
-		out.flush();
 
+	public void service(JspContext request, PrintWriter out) {
+		MetaTable table = (MetaTable) request.getAttribute("table");
+		@SuppressWarnings("unchecked")
+		Set<String> imports = (Set<String>) request.getAttribute("imports");
+		String fingerprint = (String) request.getAttribute("fingerprint");
+		String see = (String) request.getAttribute("see");
+
+		StringBuilder output = new StringBuilder();
+
+		output.append("package ").append(table.getJavaPackage()).append(";\n\n");
+
+		boolean shouldAddImports = false;
+		for (MetaColumn c : table.getColumns()) {
+			if (c.getTable() != null && c.getCode("file") != null) {
+				imports.add("java.io.File");
+				imports.add("com.tsc9526.monalisa.tools.io.MelpFile");
+				imports.add("com.tsc9526.monalisa.orm.datasource.DBConfig");
+				shouldAddImports = true;
+				break;
+			}
 		}
-}
+
+		if (shouldAddImports) {
+			for (String i : imports) {
+				output.append("import ").append(i).append(";\n");
+			}
+			output.append("\n");
+		}
+
+		output.append("/**\n");
+		output.append(" * Auto generated code by monalisa ").append(Version.getVersion()).append("\n");
+		output.append(" *\n");
+		output.append(" * @see ").append(see).append("\n");
+		output.append(" */\n");
+		output.append("public class ").append(table.getJavaName()).append(" implements java.io.Serializable {\n");
+		output.append("    private static final long serialVersionUID = ").append(table.getSerialID()).append("L;\n");
+		output.append("    final static String FINGERPRINT = \"").append(fingerprint).append("\";\n\n");
+
+		for (MetaColumn f : table.getColumns()) {
+			output.append(getComments(table, f, "\t", "\t")).append("\n");
+			output.append("    private ").append(f.getJavaType()).append(" ").append(f.getJavaName()).append(";\n\n");
+		}
+
+		for (MetaColumn f : table.getColumns()) {
+			output.append(getComments(table, f, "\t", "\t")).append("\n");
+			output.append("    public ").append(table.getJavaName()).append(" ").append(f.getJavaNameSet())
+					.append("(").append(f.getJavaType()).append(" ").append(f.getJavaName()).append(") {\n");
+			output.append("        this.").append(f.getJavaName()).append(" = ").append(f.getJavaName()).append(";\n");
+			output.append("        return this;\n");
+			output.append("    }\n\n");
+		}
+
+		for (MetaColumn f : table.getColumns()) {
+			output.append(getComments(table, f, "\t", "\t")).append("\n");
+			output.append("    public ").append(f.getJavaType()).append(" ").append(f.getJavaNameGet()).append("() {\n");
+			output.append("        return this.").append(f.getJavaName()).append(";\n");
+			output.append("    }\n\n");
+
+			output.append(getComments(table, f, "@param defaultValue  Return the default value if ")
+					.append(f.getJavaName()).append(" is null.", "\t")).append("\n");
+			output.append("    public ").append(f.getJavaType()).append(" ").append(f.getJavaNameGet())
+					.append("(").append(f.getJavaType()).append(" defaultValue) {\n");
+			output.append("        ").append(f.getJavaType()).append(" r = this.").append(f.getJavaNameGet()).append("();\n");
+			output.append("        if (r == null) {\n");
+			output.append("            r = defaultValue;\n");
+			output.append("        }\n\n");
+			output.append("        return r;\n");
+			output.append("    }\n\n");
+
+			String file = f.getCode("file");
+			if (f.getTable() != null && file != null) {
+				output.append(getComments(table, f, "@param charset  read file content using this charset.", "\t")).append("\n");
+				output.append("    public String ").append(f.getJavaNameGet()).append("AsString(String charset) {\n");
+				output.append("        ").append(f.getJavaType()).append(" r = this.").append(f.getJavaNameGet()).append("();\n");
+				output.append("        if (r == null) {\n");
+				output.append("            return null;\n");
+				output.append("        }\n\n");
+				output.append("        DBConfig db = DBConfig.fromClass(").append(f.getTable().getJavaName()).append(".class);\n");
+				output.append("        String filepath = MelpFile.combinePath(\"").append(file).append("\", r);\n");
+				output.append("        filepath = db.getCfg().parseFilePath(filepath);\n");
+				output.append("        return MelpFile.readToString(new File(filepath), charset);\n");
+				output.append("    }\n\n");
+
+				output.append(getComments(table, f, "\t", "\t")).append("\n");
+				output.append("    public String ").append(f.getJavaNameGet()).append("AsStringUTF8() {\n");
+				output.append("        return ").append(f.getJavaNameGet()).append("AsString(\"utf-8\");\n");
+				output.append("    }\n\n");
+
+				output.append(getComments(table, f, "\t", "\t")).append("\n");
+				output.append("    public byte[] ").append(f.getJavaNameGet()).append("AsBytes() {\n");
+				output.append("        ").append(f.getJavaType()).append(" r = this.").append(f.getJavaNameGet()).append("();\n");
+				output.append("        if (r == null) {\n");
+				output.append("            return null;\n");
+				output.append("        }\n\n");
+				output.append("        DBConfig db = DBConfig.fromClass(").append(f.getTable().getJavaName()).append(".class);\n");
+				output.append("        String filepath = MelpFile.combinePath(\"").append(file).append("\", r);\n");
+				output.append("        filepath = db.getCfg().parseFilePath(filepath);\n");
+				output.append("        return MelpFile.readFile(new File(filepath));\n");
+				output.append("    }\n\n");
+
+				output.append("    public File ").append(f.getJavaNameGet()).append("AsFile() {\n");
+				output.append("        ").append(f.getJavaType()).append(" r = this.").append(f.getJavaNameGet()).append("();\n");
+				output.append("        if (r == null) {\n");
+				output.append("            return null;\n");
+				output.append("        }\n\n");
+				output.append("        DBConfig db = DBConfig.fromClass(").append(f.getTable().getJavaName()).append(".class);\n");
+				output.append("        String filepath = MelpFile.combinePath(\"").append(file).append("\", r);\n");
+				output.append("        filepath = db.getCfg
+
+			}
